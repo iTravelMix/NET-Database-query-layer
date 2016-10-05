@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-*",
+  "testRunner": "mstest",
+
+  "buildOptions": {
+    "copyToOutput": "appsettings.json"
+  },
+
+  "dependencies": {
+    "ADO.Query.Core": { "target": "project" },
+    "dotnet-test-mstest": "1.1.1-preview",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0",
+    "Microsoft.Extensions.Configuration": "1.0.0",
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.1"
+    },
+    "MSTest.TestFramework": "1.0.4-preview",
+    "System.Diagnostics.TraceSource": "4.0.0",
+    "System.Reflection": "4.1.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  }
+}

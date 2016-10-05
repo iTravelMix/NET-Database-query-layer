@@ -4,13 +4,12 @@ namespace ADO.Query.Helper
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Configuration;
     using System.Data;
     using System.Linq;
 
-    using ADO.Query.Extensions;
-    using ADO.Query.Mapper;
-    using ADO.Query.SqlQuery;
+    using Extensions;
+    using Mapper;
+    using SqlQuery;
 
     public abstract class QueryRunner : IQueryRunner
     {
@@ -38,23 +37,17 @@ namespace ADO.Query.Helper
 
         #region - Factory -
 
-        public static IQueryRunner CreateHelper(string providerAlias)
+        public static IQueryRunner CreateHelper(DataAccessSectionHandler settings)
         {
-            return CreateHelper(providerAlias, null);
+            return CreateHelper(settings, null);
         }
 
-        public static IQueryRunner CreateHelper( string providerAlias, IQueryMappers mapper )
+        public static IQueryRunner CreateHelper(DataAccessSectionHandler settings, IQueryMappers mapper )
         {
             try
             {
-                var dict = ConfigurationManager.GetSection( "DataQueryProviders" ) as IDictionary;
-                if (dict == null) throw new NullReferenceException("Null Reference in DataAccess Provider configuration Session.");
-
-                var providerConfig = dict[ providerAlias ] as ProviderAlias;
-                if (providerConfig == null) throw new NullReferenceException("Null Reference in Provider Alias configuration Session.");
-
-                var providerType = providerConfig.TypeName;
-                ConnectionString = providerConfig.ConnectionString;
+                var providerType = settings.Type;
+                ConnectionString = settings.ConnectionString;
 
                 var daType = Type.GetType(providerType);
                 if (daType == null) throw new NullReferenceException("Null Reference in Provider type configuration Session.");
@@ -65,11 +58,11 @@ namespace ADO.Query.Helper
                     return provider as IQueryRunner;
                 }
 
-                throw new Exception( "The provider specified does not extends the AdoHelper abstract class." );
+                throw new Exception("The provider specified does not extends the QueryRunner abstract class.");
             }
             catch (Exception e)
             {
-                throw new Exception("If the section is not defined on the configuration file this method can't be used to create an AdoHelper instance.", e);
+                throw new Exception("If the section is not defined on the configuration file this method can't be used to create an QueryRunner instance.", e);
             }
         }
 
@@ -142,7 +135,7 @@ namespace ADO.Query.Helper
 
         #region - ExecuteQueryMapper -
 
-        public virtual QueryMapperResult<TResult> Execute<TResult>(ISqlQuery criterial) where TResult : class
+        public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class
         {
             using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters)))
             {
@@ -150,7 +143,7 @@ namespace ADO.Query.Helper
             }
         }
 
-        public virtual PageSqlResult<TResult> Execute<TResult>(ISqlPagedQuery criterial) where TResult : class
+        public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class
         {
             var dataParameters = this.GetCriterialParameters(criterial.Parameters);
 
@@ -176,7 +169,7 @@ namespace ADO.Query.Helper
 
         #region - ExecuteReader -
 
-        public virtual IDataReader ExecuteReader(ISqlQuery criterial)
+        public virtual IDataReader ExecuteReader(SqlQuery criterial)
         {
             // Pass through the call providing null for the set of IDataParameters
             return this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));
@@ -209,7 +202,7 @@ namespace ADO.Query.Helper
 
         #region - ExecuteScalar -
 
-        public virtual T ExecuteScalar<T>(ISqlQuery criterial)
+        public virtual T ExecuteScalar<T>(SqlQuery criterial)
         {
             // Pass through the call providing null for the set of IDataParameters
             return this.ExecuteScalar<T>(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));

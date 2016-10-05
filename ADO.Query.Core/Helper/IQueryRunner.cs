@@ -7,10 +7,10 @@ namespace ADO.Query.Helper
     {
         IDbConnection GetConnection();
 
-        QueryMapperResult<TResult> Execute<TResult>(ISqlQuery criterial) where TResult : class;
-        PageSqlResult<TResult> Execute<TResult>(ISqlPagedQuery criterial) where TResult : class;
+        QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class;
+        PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class;
 
-        IDataReader ExecuteReader(ISqlQuery criterial);
-        T ExecuteScalar<T>(ISqlQuery criterial);
+        IDataReader ExecuteReader(SqlQuery criterial);
+        T ExecuteScalar<T>(SqlQuery criterial);
     }
 }
