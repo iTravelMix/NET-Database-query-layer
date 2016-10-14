@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Helper;
-    using Mapper;
     using Query;
     using Query.Dto;
     using Core.Test.Data;
@@ -15,7 +14,7 @@
     [TestClass]
     public class QueryIntegrationTest
     {
-        static IConfigurationRoot Configuration;
+        static DataAccessSectionHandler dataAccessSettings;
 
         [ClassInitialize]
         public static void SetUp(TestContext context)
@@ -23,7 +22,10 @@
             LocalDb.CreateLocalDb("querytest", "GenerateDb.sql", true);
 
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
-            Configuration = builder.Build();
+            var configuration = builder.Build();
+            var adoQuery = configuration.GetSection("AdoQuery");
+
+            dataAccessSettings = new DataAccessSectionHandler(adoQuery["Type"], adoQuery["ConnectionString"]);
         }
 
         [TestCleanup]
@@ -35,7 +37,7 @@
         [TestMethod]
         public void TestIntegrationScalarQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")));
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var id = queryRunner.ExecuteScalar<int>(new QueryUsers());
 
             Assert.AreEqual(1, id);
@@ -44,7 +46,7 @@
         [TestMethod]
         public void TestIntegrationDataReaderQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")));
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             using (var dr = queryRunner.ExecuteReader(new QueryUsers()))
             {
                 Assert.IsNotNull(dr);
@@ -58,7 +60,7 @@
         [TestMethod]
         public void TestIntegrationFirstOrDefaultWithResultMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var user = queryRunner.Execute<SimpleDto>(new QueryUsers()).ToFirstOrDefault();
 
             Assert.IsNotNull(user);
@@ -70,7 +72,7 @@
         [TestMethod]
         public void TestIntegrationFirstOrDefaultWithoutResultMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var user = queryRunner.Execute<SimpleDto>(new QueryUsers(99)).ToFirstOrDefault();
 
             Assert.IsNull(user);
@@ -79,7 +81,7 @@
         [TestMethod]
         public void TestIntegrationSingleResultMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var user = queryRunner.Execute<SimpleDto>(new QueryUsers(1)).ToSingle();
 
             Assert.IsNotNull(user);
@@ -90,7 +92,7 @@
         {
             Assert.ThrowsException<InvalidOperationException>( () =>
             {
-                var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
                 queryRunner.Execute<SimpleDto>(new QueryUsers(99)).ToSingle();
             });
         }
@@ -100,7 +102,7 @@
         {
            Assert.ThrowsException<InvalidOperationException>(() =>
            {
-               var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+               var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
                queryRunner.Execute<SimpleDto>(new QueryUsers()).ToSingle();
            });
         }
@@ -108,7 +110,7 @@
         [TestMethod]
         public void TestIntegrationOneToManyMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var users = queryRunner.Execute<SimpleDto>(new QueryOneToMany()).ToList();
 
             Assert.IsNotNull(users);
@@ -125,7 +127,7 @@
         [TestMethod]
         public void TestIntegrationPerformanceOneToManyMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(new DataAccessSectionHandler(Configuration.GetSection("AdoQuery"), Configuration.GetSection("Data")), new QueryMapper());
+            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
             var iterations = 50000;
 
             var stopwatch = Stopwatch.StartNew();

@@ -11,6 +11,7 @@
     "dotnet-test-mstest": "1.1.1-preview",
     "Microsoft.Extensions.Caching.Memory": "1.0.0",
     "Microsoft.Extensions.Configuration": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.1"

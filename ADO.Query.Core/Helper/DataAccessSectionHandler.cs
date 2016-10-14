@@ -1,14 +1,12 @@
 
 namespace ADO.Query.Helper
 {
-    using Microsoft.Extensions.Configuration;
-
     public sealed class DataAccessSectionHandler
     {
-        public DataAccessSectionHandler(IConfigurationSection sectionSettings, IConfigurationSection sectionData)
+        public DataAccessSectionHandler(string type, string connectionString)
         {
-            Type = sectionSettings["Type"];
-            ConnectionString = sectionData[sectionSettings["PathConnectionString"]];
+            Type = type;
+            ConnectionString = connectionString;
         }
 
         public string Type { get; }
