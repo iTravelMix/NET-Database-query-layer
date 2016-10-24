@@ -1,15 +1,9 @@
-
-namespace ADO.Query.Helper
+﻿namespace ADO.Query.Helper
 {
-    public sealed class DataAccessSectionHandler
+    public sealed class DataAccessSectionHandler : DataAccessSectionSettings
     {
-        public DataAccessSectionHandler(string type, string connectionString)
+        public DataAccessSectionHandler(string type, string connectionString) : base(type, connectionString)
         {
-            Type = type;
-            ConnectionString = connectionString;
         }
-
-        public string Type { get; }
-        public string ConnectionString { get; }
     }
 }

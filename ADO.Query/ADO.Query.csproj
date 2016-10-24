@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ADO.Query.Core\Helper\DataAccessSettings.cs">
+      <Link>Helper\DataAccessSettings.cs</Link>
+    </Compile>
     <Compile Include="Extensions\DataReaderToDynamic.cs" />
     <Compile Include="Helper\QueryRunner.cs" />
     <Compile Include="Helper\ConfigurationMissingException.cs" />

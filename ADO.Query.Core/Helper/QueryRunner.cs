@@ -1,265 +1,265 @@
 
 namespace ADO.Query.Helper
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Data;
+	using System.Linq;
 
-    using Extensions;
-    using Mapper;
-    using SqlQuery;
+	using Extensions;
+	using Mapper;
+	using SqlQuery;
 
-    public abstract class QueryRunner : IQueryRunner
-    {
-        #region Declare members
+	public abstract class QueryRunner : IQueryRunner
+	{
+		#region Declare members
 
-        private readonly IQueryMappers mapper;
+		private readonly IQueryMappers mapper;
 
-        protected static Hashtable ParamCache = Hashtable.Synchronized(new Hashtable());
-        protected static string ConnectionString;
+		protected static Hashtable ParamCache = Hashtable.Synchronized(new Hashtable());
+		protected static string ConnectionString;
 
-        #endregion
+		#endregion
 
-        protected QueryRunner(IQueryMappers mapper)
-        {
-            this.mapper = mapper;
-        }
+		protected QueryRunner(IQueryMappers mapper)
+		{
+			this.mapper = mapper;
+		}
 
-        #region Provider specific abstract methods
-        
-        public abstract IDbConnection GetConnection();
-
-        protected abstract IDataParameter GetParameter();
+		#region Provider specific abstract methods
 		
-        #endregion
+		public abstract IDbConnection GetConnection();
 
-        #region - Factory -
+		protected abstract IDataParameter GetParameter();
+		
+		#endregion
 
-        public static IQueryRunner CreateHelper(DataAccessSectionHandler settings)
-        {
-            return CreateHelper(settings, null);
-        }
+		#region - Factory -
 
-        public static IQueryRunner CreateHelper(DataAccessSectionHandler settings, IQueryMappers mapper )
-        {
-            try
-            {
-                var providerType = settings.Type;
-                ConnectionString = settings.ConnectionString;
+		public static IQueryRunner CreateHelper(DataAccessSectionSettings settings)
+		{
+			return CreateHelper(settings, null);
+		}
 
-                var daType = Type.GetType(providerType);
-                if (daType == null) throw new NullReferenceException("Null Reference in Provider type configuration Session.");
+		public static IQueryRunner CreateHelper(DataAccessSectionSettings settings, IQueryMappers mapper )
+		{
+			try
+			{
+				var providerType = settings.Type;
+				ConnectionString = settings.ConnectionString;
 
-                var provider =  Activator.CreateInstance(daType, mapper);
-                if (provider is QueryRunner)
-                {
-                    return provider as IQueryRunner;
-                }
+				var daType = Type.GetType(providerType);
+				if (daType == null) throw new NullReferenceException("Null Reference in Provider type configuration Session.");
 
-                throw new Exception("The provider specified does not extends the QueryRunner abstract class.");
-            }
-            catch (Exception e)
-            {
-                throw new Exception("If the section is not defined on the configuration file this method can't be used to create an QueryRunner instance.", e);
-            }
-        }
+				var provider =  Activator.CreateInstance(daType, mapper);
+				if (provider is QueryRunner)
+				{
+					return provider as IQueryRunner;
+				}
 
-        #endregion
+				throw new Exception("The provider specified does not extends the QueryRunner abstract class.");
+			}
+			catch (Exception e)
+			{
+				throw new Exception("If the section is not defined on the configuration file this method can't be used to create an QueryRunner instance.", e);
+			}
+		}
 
-        #region - protected utility methods -
+		#endregion
 
-        protected virtual void AttachParameters(IDbCommand command, IDataParameter[] commandParameters)
-        {
-            if( command == null ) throw new ArgumentNullException("command");
-            if (commandParameters == null) return;
-            
-            foreach (var p in commandParameters.Where(p => p != null))
-            {
-                // Check for derived output value with no value assigned
-                if ( ( p.Direction == ParameterDirection.InputOutput || 
-                       p.Direction == ParameterDirection.Input ) && (p.Value == null))
-                {
-                    p.Value = DBNull.Value;
-                }
+		#region - protected utility methods -
 
-                command.Parameters.Add(p);
-            }
-        }
+		protected virtual void AttachParameters(IDbCommand command, IDataParameter[] commandParameters)
+		{
+			if( command == null ) throw new ArgumentNullException("command");
+			if (commandParameters == null) return;
+			
+			foreach (var p in commandParameters.Where(p => p != null))
+			{
+				// Check for derived output value with no value assigned
+				if ( ( p.Direction == ParameterDirection.InputOutput || 
+					   p.Direction == ParameterDirection.Input ) && (p.Value == null))
+				{
+					p.Value = DBNull.Value;
+				}
 
-        protected virtual void PrepareCommand(IDbCommand command, IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters, out bool mustCloseConnection )
-        {
-            if( command == null ) throw new ArgumentNullException("command");
-            if( string.IsNullOrEmpty(commandText) ) throw new ArgumentNullException("commandText");
+				command.Parameters.Add(p);
+			}
+		}
 
-            // If the provided connection is not open, we will open it
-            if (connection.State != ConnectionState.Open)
-            {
-                mustCloseConnection = true;
-                connection.Open();
-            }
-            else
-            {
-                mustCloseConnection = false;
-            }
+		protected virtual void PrepareCommand(IDbCommand command, IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters, out bool mustCloseConnection )
+		{
+			if( command == null ) throw new ArgumentNullException("command");
+			if( string.IsNullOrEmpty(commandText) ) throw new ArgumentNullException("commandText");
 
-            // Associate the connection with the command
-            command.Connection = connection;
+			// If the provided connection is not open, we will open it
+			if (connection.State != ConnectionState.Open)
+			{
+				mustCloseConnection = true;
+				connection.Open();
+			}
+			else
+			{
+				mustCloseConnection = false;
+			}
 
-            // Set the command text (stored procedure name or SQL statement)
-            command.CommandText = commandText;
+			// Associate the connection with the command
+			command.Connection = connection;
 
-            // If we were provided a transaction, assign it
-            if (transaction != null)
-            {
-                if( transaction.Connection == null ) throw new ArgumentException( "The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
-                command.Transaction = transaction;
-            }
+			// Set the command text (stored procedure name or SQL statement)
+			command.CommandText = commandText;
 
-            // Set the command type
-            command.CommandType = commandType;
+			// If we were provided a transaction, assign it
+			if (transaction != null)
+			{
+				if( transaction.Connection == null ) throw new ArgumentException( "The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
+				command.Transaction = transaction;
+			}
 
-            // Attach the command parameters if they are provided
-            if (commandParameters != null)
-            {
-                this.AttachParameters(command, commandParameters);
-            }
-        }
+			// Set the command type
+			command.CommandType = commandType;
 
-        protected virtual void ClearCommand(IDbCommand command )
-        {
-        }
+			// Attach the command parameters if they are provided
+			if (commandParameters != null)
+			{
+				this.AttachParameters(command, commandParameters);
+			}
+		}
 
-        #endregion private utility methods
+		protected virtual void ClearCommand(IDbCommand command )
+		{
+		}
 
-        #region - ExecuteQueryMapper -
+		#endregion private utility methods
 
-        public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class
-        {
-            using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters)))
-            {
-                return new QueryMapperResult<TResult>(this.mapper, dr.ToDynamic());
-            }
-        }
+		#region - ExecuteQueryMapper -
 
-        public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class
-        {
-            var dataParameters = this.GetCriterialParameters(criterial.Parameters);
+		public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class
+		{
+			using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters)))
+			{
+				return new QueryMapperResult<TResult>(this.mapper, dr.ToDynamic());
+			}
+		}
 
-            var total = this.ExecuteScalar<long>(CommandType.Text, criterial.SqlCount, dataParameters);
-            var totalPages = total % criterial.ItemsPerPage == 0 ? total / criterial.ItemsPerPage : (total / criterial.ItemsPerPage) + 1;
+		public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class
+		{
+			var dataParameters = this.GetCriterialParameters(criterial.Parameters);
 
-            IEnumerable<TResult> result;
-            using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, dataParameters))
-            {
-                result = this.mapper.MapDynamicToList<TResult>((List<object>)dr.ToDynamic());
-            }
+			var total = this.ExecuteScalar<long>(CommandType.Text, criterial.SqlCount, dataParameters);
+			var totalPages = total % criterial.ItemsPerPage == 0 ? total / criterial.ItemsPerPage : (total / criterial.ItemsPerPage) + 1;
 
-            return new PageSqlResult<TResult>
-            {
-                CurrentPage = criterial.Page,
-                TotalItems = total,
-                TotalPages = totalPages,
-                Result = result
-            };
-        }
+			IEnumerable<TResult> result;
+			using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, dataParameters))
+			{
+				result = this.mapper.MapDynamicToList<TResult>((List<object>)dr.ToDynamic());
+			}
 
-        #endregion
+			return new PageSqlResult<TResult>
+			{
+				CurrentPage = criterial.Page,
+				TotalItems = total,
+				TotalPages = totalPages,
+				Result = result
+			};
+		}
 
-        #region - ExecuteReader -
+		#endregion
 
-        public virtual IDataReader ExecuteReader(SqlQuery criterial)
-        {
-            // Pass through the call providing null for the set of IDataParameters
-            return this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));
-        }
+		#region - ExecuteReader -
 
-        private IDataReader ExecuteReader(CommandType commandType, string commandText, params IDataParameter[] commandParameters)
-        {
-            return this.ExecuteReader(this.GetConnection(), null, commandType, commandText, commandParameters);
-        }
+		public virtual IDataReader ExecuteReader(SqlQuery criterial)
+		{
+			// Pass through the call providing null for the set of IDataParameters
+			return this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));
+		}
 
-        private IDataReader ExecuteReader(IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters)
-        {
-            if (connection == null) throw new ArgumentNullException("connection");
-            bool mustCloseConnection;
+		private IDataReader ExecuteReader(CommandType commandType, string commandText, params IDataParameter[] commandParameters)
+		{
+			return this.ExecuteReader(this.GetConnection(), null, commandType, commandText, commandParameters);
+		}
 
-            // Create a command and prepare it for execution
-            var cmd = connection.CreateCommand();
-            this.PrepareCommand(cmd, connection, transaction, commandType, commandText, commandParameters, out mustCloseConnection);
+		private IDataReader ExecuteReader(IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters)
+		{
+			if (connection == null) throw new ArgumentNullException("connection");
+			bool mustCloseConnection;
 
-            // Create a reader
+			// Create a command and prepare it for execution
+			var cmd = connection.CreateCommand();
+			this.PrepareCommand(cmd, connection, transaction, commandType, commandText, commandParameters, out mustCloseConnection);
 
-            // Call ExecuteReader with the appropriate CommandBehavior
-            var dataReader = mustCloseConnection ? cmd.ExecuteReader(CommandBehavior.CloseConnection) : cmd.ExecuteReader();
+			// Create a reader
 
-            this.ClearCommand(cmd);
-            return dataReader;
-        }
+			// Call ExecuteReader with the appropriate CommandBehavior
+			var dataReader = mustCloseConnection ? cmd.ExecuteReader(CommandBehavior.CloseConnection) : cmd.ExecuteReader();
 
-        #endregion ExecuteReader
+			this.ClearCommand(cmd);
+			return dataReader;
+		}
 
-        #region - ExecuteScalar -
+		#endregion ExecuteReader
 
-        public virtual T ExecuteScalar<T>(SqlQuery criterial)
-        {
-            // Pass through the call providing null for the set of IDataParameters
-            return this.ExecuteScalar<T>(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));
-        }
+		#region - ExecuteScalar -
 
-        private T ExecuteScalar<T>(CommandType commandType, string commandText, params IDataParameter[] commandParameters)
-        {
-            using (var connection = this.GetConnection())
-            {
-                return this.ExecuteScalar<T>(connection, commandType, commandText, commandParameters);
-            }
-        }
+		public virtual T ExecuteScalar<T>(SqlQuery criterial)
+		{
+			// Pass through the call providing null for the set of IDataParameters
+			return this.ExecuteScalar<T>(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters));
+		}
 
-        private T ExecuteScalar<T>(IDbConnection connection, CommandType commandType, string commandText, params IDataParameter[] commandParameters)
-        {
-            if (connection == null) throw new ArgumentNullException("connection");
-            var mustCloseConnection = false;
+		private T ExecuteScalar<T>(CommandType commandType, string commandText, params IDataParameter[] commandParameters)
+		{
+			using (var connection = this.GetConnection())
+			{
+				return this.ExecuteScalar<T>(connection, commandType, commandText, commandParameters);
+			}
+		}
 
-            try
-            {
-                // Create a command and prepare it for execution
-                var cmd = connection.CreateCommand();
+		private T ExecuteScalar<T>(IDbConnection connection, CommandType commandType, string commandText, params IDataParameter[] commandParameters)
+		{
+			if (connection == null) throw new ArgumentNullException("connection");
+			var mustCloseConnection = false;
 
-                this.PrepareCommand(cmd, connection, null, commandType, commandText, commandParameters, out mustCloseConnection);
+			try
+			{
+				// Create a command and prepare it for execution
+				var cmd = connection.CreateCommand();
 
-                // Execute the command & return the results
-                var retval = cmd.ExecuteScalar();
+				this.PrepareCommand(cmd, connection, null, commandType, commandText, commandParameters, out mustCloseConnection);
 
-                // Detach the SqlParameters from the command object, so they can be used again
-                cmd.Parameters.Clear();
+				// Execute the command & return the results
+				var retval = cmd.ExecuteScalar();
 
-                return (T)retval;
-            }
-            finally 
-            {
-                if (mustCloseConnection && connection.State != ConnectionState.Closed) connection.Close();
-            }
-        }
+				// Detach the SqlParameters from the command object, so they can be used again
+				cmd.Parameters.Clear();
 
-        #endregion	
+				return (T)retval;
+			}
+			finally 
+			{
+				if (mustCloseConnection && connection.State != ConnectionState.Closed) connection.Close();
+			}
+		}
 
-        #region - Parameter Discovery Functions -
+		#endregion	
 
-        public virtual IDataParameter GetParameter(string name, object value)
-        {
-            var parameter = this.GetParameter();
-            parameter.ParameterName = name;
-            parameter.Value = value;
+		#region - Parameter Discovery Functions -
 
-            return parameter;
-        }
+		public virtual IDataParameter GetParameter(string name, object value)
+		{
+			var parameter = this.GetParameter();
+			parameter.ParameterName = name;
+			parameter.Value = value;
 
-        private IDataParameter[] GetCriterialParameters(IEnumerable<KeyValuePair<string, object>> parameters)
-        {
-            return parameters != null ? parameters.Select(p => this.GetParameter(p.Key, p.Value)).ToArray() : null;
-        }
-        
-        #endregion Parameter Discovery Functions
-    }
+			return parameter;
+		}
+
+		private IDataParameter[] GetCriterialParameters(IEnumerable<KeyValuePair<string, object>> parameters)
+		{
+			return parameters != null ? parameters.Select(p => this.GetParameter(p.Key, p.Value)).ToArray() : null;
+		}
+		
+		#endregion Parameter Discovery Functions
+	}
 }
