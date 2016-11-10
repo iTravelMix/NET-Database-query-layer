@@ -23,31 +23,6 @@ namespace ADO.Query.Test
         }
 
         [TestMethod]
-        public void TestDataTableQuery()
-        {
-            var queryRunner = new MockQueryRunner
-            {
-                ReturnValues = new List<IDictionary<string, object>>
-                {
-                    new Dictionary<string, object>
-                    {
-                        {"Id", 1},
-                        {"Name", "Test"}                   
-                    }                
-                } 
-            };
-
-            var dt = queryRunner.ExecuteDataTable(new QuerySimple());
-            
-            Assert.IsNotNull(dt);
-            Assert.IsNotNull(dt.Rows);
-
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual(1, Convert.ToInt32(dt.Rows[0]["Id"]));
-            Assert.AreEqual("Test", Convert.ToString(dt.Rows[0]["Name"]));
-        }
-
-        [TestMethod]
         public void TestScalarQuery()
         {
             var queryRunner = new MockQueryRunner

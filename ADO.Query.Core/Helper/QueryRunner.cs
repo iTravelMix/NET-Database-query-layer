@@ -11,7 +11,7 @@ namespace ADO.Query.Helper
 	using Mapper;
 	using SqlQuery;
 
-	public abstract class QueryRunner : IQueryRunner
+	public abstract partial class QueryRunner : IQueryRunner
 	{
 		#region Declare members
 
@@ -33,39 +33,6 @@ namespace ADO.Query.Helper
 
 		protected abstract IDataParameter GetParameter();
 		
-		#endregion
-
-		#region - Factory -
-
-		public static IQueryRunner CreateHelper(DataAccessSectionSettings settings)
-		{
-			return CreateHelper(settings, null);
-		}
-
-		public static IQueryRunner CreateHelper(DataAccessSectionSettings settings, IQueryMappers mapper )
-		{
-			try
-			{
-				var providerType = settings.Type;
-				ConnectionString = settings.ConnectionString;
-
-				var daType = Type.GetType(providerType);
-				if (daType == null) throw new NullReferenceException("Null Reference in Provider type configuration Session.");
-
-				var provider =  Activator.CreateInstance(daType, mapper);
-				if (provider is QueryRunner)
-				{
-					return provider as IQueryRunner;
-				}
-
-				throw new Exception("The provider specified does not extends the QueryRunner abstract class.");
-			}
-			catch (Exception e)
-			{
-				throw new Exception("If the section is not defined on the configuration file this method can't be used to create an QueryRunner instance.", e);
-			}
-		}
-
 		#endregion
 
 		#region - protected utility methods -
