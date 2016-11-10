@@ -13,7 +13,7 @@
     /// </summary>
     public class PgSql : QueryRunner
     {
-        public PgSql(IQueryMappers mapper) : base(mapper)
+        public PgSql(string connectionString, IQueryMappers mapper=null) : base(connectionString, mapper)
         {
         }
 

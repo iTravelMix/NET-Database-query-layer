@@ -9,7 +9,7 @@ namespace ADO.Query.Helper
 
     public sealed class MySql : QueryRunner
     {
-        public MySql(IQueryMappers mapper) : base(mapper)
+        public MySql(string connectionString, IQueryMappers mapper = null) : base(connectionString, mapper)
         {
         }
 

@@ -18,7 +18,7 @@
         {            
         }
 
-        public MockQueryRunner(IQueryMappers mapper) : base(mapper)
+        public MockQueryRunner(string connectionString, IQueryMappers mapper = null) : base(connectionString, mapper)
         {
         }
 

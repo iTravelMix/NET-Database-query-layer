@@ -9,7 +9,7 @@ namespace ADO.Query.Helper
 
     public class MsSql : QueryRunner
     {
-        public MsSql(IQueryMappers mapper) : base(mapper)
+        public MsSql(string connectionString, IQueryMappers mapper = null) : base(connectionString, mapper)
         {
         }
 

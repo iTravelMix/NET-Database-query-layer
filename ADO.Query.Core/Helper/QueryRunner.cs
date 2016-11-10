@@ -2,7 +2,6 @@
 namespace ADO.Query.Helper
 {
 	using System;
-	using System.Collections;
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Linq;
@@ -16,15 +15,14 @@ namespace ADO.Query.Helper
 		#region Declare members
 
 		private readonly IQueryMappers mapper;
-
-		protected static Hashtable ParamCache = Hashtable.Synchronized(new Hashtable());
-		protected static string ConnectionString;
+		protected string ConnectionString;
 
 		#endregion
 
-		protected QueryRunner(IQueryMappers mapper)
+		protected QueryRunner(string connectionString, IQueryMappers mapper = null)
 		{
 			this.mapper = mapper;
+			this.ConnectionString = connectionString;
 		}
 
 		#region Provider specific abstract methods

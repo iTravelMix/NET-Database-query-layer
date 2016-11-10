@@ -17,12 +17,11 @@ namespace ADO.Query.Helper
             try
             {
                 var providerType = settings.Type;
-                ConnectionString = settings.ConnectionString;
 
                 var daType = Type.GetType(providerType);
                 if (daType == null) throw new NullReferenceException("Null Reference in Provider type configuration Session.");
 
-                var provider = Activator.CreateInstance(daType, mapper);
+                var provider = Activator.CreateInstance(daType, settings.ConnectionString, mapper);
                 if (provider is QueryRunner)
                 {
                     return provider as IQueryRunner;
