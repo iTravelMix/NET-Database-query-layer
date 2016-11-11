@@ -100,12 +100,22 @@ namespace ADO.Query.Helper
 
 		#region - ExecuteQueryMapper -
 
+		public virtual QueryMapperResult<T> Execute<T>(SqlQueryGeneric<T> criterial) where T: class
+		{
+			return this.Execute<T>((SqlQuery)criterial);
+		}
+
 		public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class
 		{
 			using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters)))
 			{
 				return new QueryMapperResult<TResult>(this.mapper, dr.ToDynamic());
 			}
+		}
+
+		public virtual PageSqlResult<T> Execute<T>(SqlPagedQueryGeneric<T> criterial) where T : class
+		{
+			return this.Execute<T>((SqlPagedQuery)criterial);
 		}
 
 		public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class

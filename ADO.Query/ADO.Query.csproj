@@ -88,8 +88,14 @@
     <Compile Include="..\ADO.Query.Core\SqlQuery\SqlPagedQuery.cs">
       <Link>SqlQuery\SqlPagedQuery.cs</Link>
     </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlPagedQueryGeneric.cs">
+      <Link>Helper\SqlPagedQueryGeneric.cs</Link>
+    </Compile>
     <Compile Include="..\ADO.Query.Core\SqlQuery\SqlQuery.cs">
       <Link>SqlQuery\SqlQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlQueryGeneric.cs">
+      <Link>Helper\SqlQueryGeneric.cs</Link>
     </Compile>
     <Compile Include="Helper\ConfigurationMissingException.cs" />
     <Compile Include="Helper\DataAccessSectionHandler.cs" />
