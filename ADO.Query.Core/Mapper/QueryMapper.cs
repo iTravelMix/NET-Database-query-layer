@@ -8,6 +8,8 @@
 
     public class QueryMapper : IQueryMappers, IDisposable
     {
+        public static bool RemoveCacheAfterExecuteQuery { get; set; }
+
         #region Implementation of IMapper
 
         public QueryMapper()
@@ -15,20 +17,20 @@
             AutoMapper.Cache.ClearInstanceCache();
         }
 
-        public IEnumerable<TDestination> MapDynamicToList<TDestination>(List<object> source) where TDestination : class
+        public IEnumerable<TDestination> MapDynamicToEnumerable<TDestination>(List<object> source, bool keepCache = true) where TDestination : class
         {
-            return (source != null) ? AutoMapper.MapDynamic<TDestination>(source) : null;
+            return (source != null) ? AutoMapper.MapDynamic<TDestination>(source, keepCache && !RemoveCacheAfterExecuteQuery) : null;
         }
 
-        public TDestination MapDynamicToSingle<TDestination>(IList<object> source) where TDestination : class
+        public TDestination MapDynamicToSingle<TDestination>(IList<object> source, bool keepCache = true) where TDestination : class
         {
             if (source == null) throw new InvalidOperationException("Query result is empty...");
-            return AutoMapper.MapDynamic<TDestination>(source).Single();
+            return AutoMapper.MapDynamic<TDestination>(source, keepCache && !RemoveCacheAfterExecuteQuery).Single();
         }
 
-        public TDestination MapDynamicToFirstOrDefault<TDestination>(IList<object> source) where TDestination : class
+        public TDestination MapDynamicToFirstOrDefault<TDestination>(IList<object> source, bool keepCache = true) where TDestination : class
         {
-            return source == null ? null : AutoMapper.MapDynamic<TDestination>(source).FirstOrDefault();
+            return source == null ? null : AutoMapper.MapDynamic<TDestination>(source, keepCache && !RemoveCacheAfterExecuteQuery).FirstOrDefault();
         }
 
         #endregion
@@ -36,6 +38,7 @@
         public void Dispose()
         {
             AutoMapper.Cache.ClearInstanceCache();
+            GC.SuppressFinalize(this);
         }
     }
 }

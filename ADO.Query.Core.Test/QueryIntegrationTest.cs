@@ -10,6 +10,7 @@
     using Core.Test.Data;
     using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Mapper;
 
     [TestClass]
     public class QueryIntegrationTest
@@ -60,13 +61,16 @@
         [TestMethod]
         public void TestIntegrationFirstOrDefaultWithResultMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
-            var user = queryRunner.Execute<SimpleDto>(new QueryUsers()).ToFirstOrDefault();
+            using (var queryMapper = new QueryMapper())
+            {
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+                var user = queryRunner.Execute(new QueryUsers()).ToFirstOrDefault();
 
-            Assert.IsNotNull(user);
+                Assert.IsNotNull(user);
 
-            Assert.AreEqual(1, user.Id);
-            Assert.AreEqual("Diana Hendrix", user.Name);
+                Assert.AreEqual(1, user.Id);
+                Assert.AreEqual("Diana Hendrix", user.Name);
+            }
         }
 
         [TestMethod]
@@ -110,18 +114,21 @@
         [TestMethod]
         public void TestIntegrationOneToManyMapperQuery()
         {
-            var queryRunner = QueryRunner.CreateHelper(dataAccessSettings);
-            var users = queryRunner.Execute<SimpleDto>(new QueryOneToMany()).ToList();
+            using (var queryMapper = new QueryMapper())
+            {
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+                var users = queryRunner.Execute<SimpleDto>(new QueryOneToMany()).ToList();
 
-            Assert.IsNotNull(users);
-            // ReSharper disable PossibleMultipleEnumeration
-            Assert.AreEqual(3, users.Count());
+                Assert.IsNotNull(users);
+                // ReSharper disable PossibleMultipleEnumeration
+                Assert.AreEqual(3, users.Count());
 
-            var user = users.First();
-            // ReSharper restore PossibleMultipleEnumeration
+                var user = users.First();
+                // ReSharper restore PossibleMultipleEnumeration
 
-            Assert.IsNotNull(user.Phones);
-            Assert.AreEqual(2, user.Phones.Count());
+                Assert.IsNotNull(user.Phones);
+                Assert.AreEqual(2, user.Phones.Count());
+            }
         }
 
         [TestMethod]
@@ -147,6 +154,47 @@
             }
 
             Trace.WriteLine($"Mapped {iterations} objects in {stopwatch.ElapsedMilliseconds} ms.");
+        }
+
+        [TestMethod]
+        public void TestIntegrationWhithoutCacheResultMapperQuery()
+        {
+            QueryMapper.RemoveCacheAfterExecuteQuery = true;
+
+            try
+            {
+                using (var queryMapper = new QueryMapper())
+                {
+                    var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+
+                    var user = queryRunner.Execute(new QueryUsers(1)).ToSingle();
+                    var phone = queryRunner.Execute(new QueryPhone(1)).ToSingle();
+
+                    Assert.AreEqual(1, phone.Id);
+                    Assert.AreNotEqual(user.Name, phone.Name);
+                }
+            }
+            finally
+            {
+                QueryMapper.RemoveCacheAfterExecuteQuery = false;
+            }
+        }
+
+        [TestMethod]
+        public void TestIntegrationCacheFailsResultMapperQuery()
+        {
+            QueryMapper.RemoveCacheAfterExecuteQuery = false;
+
+            using (var queryMapper = new QueryMapper())
+            {
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+
+                var user = queryRunner.Execute(new QueryUsers(1)).ToSingle();
+                var phone = queryRunner.Execute(new QueryPhone(1)).ToSingle();
+
+                Assert.AreEqual(1, phone.Id);
+                Assert.AreEqual(user.Name, phone.Name);
+            }
         }
     }
 }

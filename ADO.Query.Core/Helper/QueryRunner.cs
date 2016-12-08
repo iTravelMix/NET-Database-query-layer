@@ -100,25 +100,25 @@ namespace ADO.Query.Helper
 
 		#region - ExecuteQueryMapper -
 
-		public virtual QueryMapperResult<T> Execute<T>(SqlQueryGeneric<T> criterial) where T: class
+		public virtual QueryMapperResult<T> Execute<T>(SqlQueryGeneric<T> criterial, bool keepCache = true) where T: class
 		{
-			return this.Execute<T>((SqlQuery)criterial);
+			return this.Execute<T>((SqlQuery)criterial, keepCache);
 		}
 
-		public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial) where TResult : class
+		public virtual QueryMapperResult<TResult> Execute<TResult>(SqlQuery criterial, bool keepCache = true) where TResult : class
 		{
 			using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, this.GetCriterialParameters(criterial.Parameters)))
 			{
-				return new QueryMapperResult<TResult>(this.mapper, dr.ToDynamic());
+				return new QueryMapperResult<TResult>(this.mapper, dr.ToDynamic(), keepCache);
 			}
 		}
 
-		public virtual PageSqlResult<T> Execute<T>(SqlPagedQueryGeneric<T> criterial) where T : class
+		public virtual PageSqlResult<T> Execute<T>(SqlPagedQueryGeneric<T> criterial, bool keepCache = true) where T : class
 		{
-			return this.Execute<T>((SqlPagedQuery)criterial);
+			return this.Execute<T>((SqlPagedQuery)criterial, keepCache);
 		}
 
-		public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial) where TResult : class
+		public virtual PageSqlResult<TResult> Execute<TResult>(SqlPagedQuery criterial, bool keepCache = true) where TResult : class
 		{
 			var dataParameters = this.GetCriterialParameters(criterial.Parameters);
 
@@ -128,7 +128,7 @@ namespace ADO.Query.Helper
 			IEnumerable<TResult> result;
 			using (var dr = this.ExecuteReader(CommandType.Text, criterial.Expression, dataParameters))
 			{
-				result = this.mapper.MapDynamicToList<TResult>((List<object>)dr.ToDynamic());
+				result = this.mapper.MapDynamicToEnumerable<TResult>((List<object>)dr.ToDynamic(), keepCache);
 			}
 
 			return new PageSqlResult<TResult>

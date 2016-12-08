@@ -1,9 +1,10 @@
 ﻿namespace ADO.Query.Test.Query
 {
     using System.Collections.Generic;
+    using Dto;
     using SqlQuery;
 
-    public class QueryUsers : SqlQuery
+    public class QueryUsers : SqlQueryGeneric<SimpleDto>
     {
         public QueryUsers()
         {
@@ -16,7 +17,7 @@
 
             this.Parameters = new Dictionary<string, object>
             {
-                {"id", id}                                      
+                {nameof(id), id}                                      
             };
         }
     }
