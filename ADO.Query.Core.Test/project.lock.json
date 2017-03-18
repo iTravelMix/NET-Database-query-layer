@@ -978,7 +978,7 @@
           }
         }
       },
-      "Slapper.AutoMapper/2.0.0.5": {
+      "Slapper.AutoMapper/2.0.0.9": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Caching.Memory": "1.0.0",
@@ -2968,7 +2968,7 @@
           "Microsoft.CSharp": "4.0.1",
           "NETStandard.Library": "1.6.0",
           "Npgsql": "3.1.8",
-          "Slapper.AutoMapper": "2.0.0.5",
+          "Slapper.AutoMapper": "2.0.0.9",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Data.Common": "4.1.0",
           "System.Data.SqlClient": "4.1.0",
@@ -3849,12 +3849,12 @@
         "runtimes/win7-x86/native/sni.dll"
       ]
     },
-    "Slapper.AutoMapper/2.0.0.5": {
-      "sha512": "f8MaI5lq+DXK+NqlAo0OupcVS9vFA7EikZOrdiBJObp8FNJNAidH9iycXU6ccEPpDm95amjaVFbDXDlKHtl53w==",
+    "Slapper.AutoMapper/2.0.0.9": {
+      "sha512": "uFcipIkzfmzTZAeGeSdUxk0bMrUUlAUk39yEN9nymvg/sNBKTFyeL/x8mox+ToVuQpSkEz+vNDeF1GzLkutNMA==",
       "type": "package",
-      "path": "Slapper.AutoMapper/2.0.0.5",
+      "path": "Slapper.AutoMapper/2.0.0.9",
       "files": [
-        "Slapper.AutoMapper.2.0.0.5.nupkg.sha512",
+        "Slapper.AutoMapper.2.0.0.9.nupkg.sha512",
         "Slapper.AutoMapper.nuspec",
         "lib/netstandard1.4/Slapper.dll",
         "lib/netstandard1.4/Slapper.pdb",

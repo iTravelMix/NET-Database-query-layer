@@ -11,6 +11,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Mapper;
+    using System.Collections.Generic;
+    using Slapper;
 
     [TestClass]
     public class QueryIntegrationTest
@@ -20,6 +22,8 @@
         [ClassInitialize]
         public static void SetUp(TestContext context)
         {
+            AutoMapper.Configuration.AddIdentifiers(typeof(NameValue), new List<string> { "Id", "Name" });
+
             LocalDb.CreateLocalDb("querytest", "GenerateDb.sql", true);
 
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
@@ -157,7 +161,7 @@
         }
 
         [TestMethod]
-        public void TestIntegrationWhithoutCacheResultMapperQuery()
+        public void TestIntegrationWhithoutGlobalCacheResultMapperQuery()
         {
             QueryMapper.RemoveCacheAfterExecuteQuery = true;
 
@@ -181,7 +185,7 @@
         }
 
         [TestMethod]
-        public void TestIntegrationCacheFailsResultMapperQuery()
+        public void TestIntegrationGlobalCacheFailsResultMapperQuery()
         {
             QueryMapper.RemoveCacheAfterExecuteQuery = false;
 
@@ -194,6 +198,38 @@
 
                 Assert.AreEqual(1, phone.Id);
                 Assert.AreEqual(user.Name, phone.Name);
+            }
+        }
+
+        [TestMethod]
+        public void TestIntegrationWhithoutExecuteCacheResultMapperQuery()
+        {
+
+            QueryMapper.RemoveCacheAfterExecuteQuery = false;
+
+            using (var queryMapper = new QueryMapper())
+            {
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+
+                var user = queryRunner.Execute(new QueryUsers(1), keepCache: false).ToSingle();
+                var phone = queryRunner.Execute(new QueryPhone(1), keepCache: false).ToSingle();
+
+                Assert.AreEqual(1, phone.Id);
+                Assert.AreNotEqual(user.Name, phone.Name);
+            }
+        }
+
+        [TestMethod]
+        public void TestIntegrationWhithoutGlobalCacheResultOneToManyMapperQuery()
+        {
+            using (var queryMapper = new QueryMapper())
+            {
+                var queryRunner = QueryRunner.CreateHelper(dataAccessSettings, queryMapper);
+
+                var user = queryRunner.Execute<NameValue>(new QueryOneToManyMapObject(1)).ToFirstOrDefault();
+
+                Assert.AreEqual("123456", user.Phones.FirstOrDefault(p => p.Id == 1).Name);
+                Assert.AreEqual("a@b.com", user.Emails.FirstOrDefault(e => e.Id == 1).Name);
             }
         }
     }

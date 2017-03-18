@@ -11,16 +11,16 @@
         private readonly dynamic source;
         private readonly bool keepCache;
 
-        public QueryMapperResult(IQueryMappers mapper, dynamic source, bool keepCache = true)
+        internal QueryMapperResult(IQueryMappers mapper, dynamic source, bool keepCache = true)
         {
-            if (mapper == null) throw new ArgumentNullException("mapper", "Mapper can't be null in QueryMapperResult");
+            if (mapper == null) throw new ArgumentNullException(nameof(mapper), "Mapper can't be null in QueryMapperResult");
 
             this.mapper = mapper;
             this.source = source;
             this.keepCache = keepCache;
         }
 
-        public IList<T> ToList()
+        public List<T> ToList()
         {
             IEnumerable<T> result = this.mapper.MapDynamicToEnumerable<T>(this.source, keepCache);
             return result.ToList();

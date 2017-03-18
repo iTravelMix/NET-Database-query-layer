@@ -3,8 +3,7 @@
     using System;
     using System.Data;
 
-    using ADO.Query.Mapper;
-
+    using Mapper;
     using Npgsql;
 
     /// <summary>
@@ -19,7 +18,7 @@
 
         public override IDbConnection GetConnection()
         {
-            if (string.IsNullOrEmpty(ConnectionString)) throw new NullReferenceException("ConnectionString");
+            if (string.IsNullOrEmpty(ConnectionString)) throw new NullReferenceException(nameof(ConnectionString));
             return new NpgsqlConnection(ConnectionString);
         }
 
@@ -28,9 +27,9 @@
         /// </summary>
         /// <param name="connectionString">cadena de conexión a utilizar</param>
         /// <returns>Una conexión a la base de datos</returns>
-        public IDbConnection GetConnection(string connectionString)
+        public static IDbConnection GetConnection(string connectionString)
         {
-            if (string.IsNullOrEmpty(connectionString)) throw new NullReferenceException("connectionString");
+            if (string.IsNullOrEmpty(connectionString)) throw new NullReferenceException(nameof(connectionString));
             return new NpgsqlConnection(connectionString);
         }
 

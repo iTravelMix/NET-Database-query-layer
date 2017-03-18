@@ -15,7 +15,7 @@ namespace ADO.Query.Helper
 
         public override IDbConnection GetConnection()
         {
-            if (string.IsNullOrEmpty(ConnectionString)) throw new NullReferenceException("ConnectionString");
+            if (string.IsNullOrEmpty(ConnectionString)) throw new NullReferenceException(nameof(ConnectionString));
             return new SqlConnection(ConnectionString);
         }
 
@@ -24,9 +24,9 @@ namespace ADO.Query.Helper
         /// </summary>
         /// <param name="connectionString">connection string to use</param>
         /// <returns>Database connection</returns>
-        public IDbConnection GetConnection(string connectionString)
+        public static IDbConnection GetConnection(string connectionString)
         {
-            if (string.IsNullOrEmpty(connectionString)) throw new NullReferenceException("connectionString");
+            if (string.IsNullOrEmpty(connectionString)) throw new NullReferenceException(nameof(connectionString));
             return new SqlConnection(connectionString);
         }
 
