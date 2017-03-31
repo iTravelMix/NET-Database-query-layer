@@ -1,5 +1,6 @@
 ﻿namespace ADO.Query.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Dynamic;
@@ -33,7 +34,7 @@
             var expandoObject = new ExpandoObject() as IDictionary<string, object>;
 
             for (var i = 0; i < record.FieldCount; i++)
-                expandoObject.Add(record.GetName(i), record[i]);
+                expandoObject.Add(record.GetName(i), record[i] == DBNull.Value ? null : record[i]);
 
             return expandoObject;
         }

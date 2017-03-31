@@ -23,31 +23,6 @@ namespace ADO.Query.Test
         }
 
         [TestMethod]
-        public void TestDataTableQuery()
-        {
-            var queryRunner = new MockQueryRunner
-            {
-                ReturnValues = new List<IDictionary<string, object>>
-                {
-                    new Dictionary<string, object>
-                    {
-                        {"Id", 1},
-                        {"Name", "Test"}                   
-                    }                
-                } 
-            };
-
-            var dt = queryRunner.ExecuteDataTable(new QuerySimple());
-            
-            Assert.IsNotNull(dt);
-            Assert.IsNotNull(dt.Rows);
-
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual(1, Convert.ToInt32(dt.Rows[0]["Id"]));
-            Assert.AreEqual("Test", Convert.ToString(dt.Rows[0]["Name"]));
-        }
-
-        [TestMethod]
         public void TestScalarQuery()
         {
             var queryRunner = new MockQueryRunner
@@ -93,7 +68,7 @@ namespace ADO.Query.Test
         [TestMethod]
         public void TestMapperQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {
@@ -127,7 +102,7 @@ namespace ADO.Query.Test
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestSingleMapperFailureWithMorethanOneElementQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {
@@ -150,7 +125,7 @@ namespace ADO.Query.Test
         [TestMethod]
         public void TestSingleQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {
@@ -172,7 +147,7 @@ namespace ADO.Query.Test
         [TestMethod]
         public void TestFirstOrDefaultEmptyQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>()
             };
@@ -184,7 +159,7 @@ namespace ADO.Query.Test
         [TestMethod]
         public void TestFirstOrDefaultQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {
@@ -211,7 +186,7 @@ namespace ADO.Query.Test
         [TestMethod]
         public void TestPageQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {
@@ -240,7 +215,7 @@ namespace ADO.Query.Test
         [ExpectedException(typeof(InvalidCastException))]
         public void TestPageFailureCountQuery()
         {
-            var queryRunner = new MockQueryRunner(new QueryMapper())
+            var queryRunner = new MockQueryRunner(string.Empty, new QueryMapper())
             {
                 ReturnValues = new List<IDictionary<string, object>>
                 {

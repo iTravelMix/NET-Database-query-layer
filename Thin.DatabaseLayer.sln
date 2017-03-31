@@ -1,20 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QueryBuilder", "QueryBuilder", "{AF4F465D-2356-433D-ABAE-6185CC65EDD7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADO.Query", "ADO.Query\ADO.Query.csproj", "{98B19C37-0DA6-49E2-96CD-50C473451B8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFB5BB56-9A30-4AF8-8ACE-ED8F30F251B1}"
 	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QueryBuilder.Test", "QueryBuilder.Test", "{05B3A54B-E845-469C-9AF6-4668B930E039}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADO.Query.Test", "ADO.Query.Test\ADO.Query.Test.csproj", "{2E63D956-5B22-44CE-892E-CD5846A299D7}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ADO.Query.Core", "ADO.Query.Core\ADO.Query.Core.xproj", "{A021D081-A60C-47D2-BE10-67EF25B4A97C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NET Framework 4.5", "NET Framework 4.5", "{838BC939-7F4E-4BAB-88B9-84296B977F47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NET Core", "NET Core", "{75E582A2-2CC0-4B21-8E7B-BA6CEC49195A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ADO.Query.Core.Test", "ADO.Query.Core.Test\ADO.Query.Core.Test.xproj", "{6704A0E6-626A-47A2-AAB6-1E8AA60008F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,12 +35,22 @@ Global
 		{2E63D956-5B22-44CE-892E-CD5846A299D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E63D956-5B22-44CE-892E-CD5846A299D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E63D956-5B22-44CE-892E-CD5846A299D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A021D081-A60C-47D2-BE10-67EF25B4A97C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A021D081-A60C-47D2-BE10-67EF25B4A97C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A021D081-A60C-47D2-BE10-67EF25B4A97C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A021D081-A60C-47D2-BE10-67EF25B4A97C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6704A0E6-626A-47A2-AAB6-1E8AA60008F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6704A0E6-626A-47A2-AAB6-1E8AA60008F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6704A0E6-626A-47A2-AAB6-1E8AA60008F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6704A0E6-626A-47A2-AAB6-1E8AA60008F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{98B19C37-0DA6-49E2-96CD-50C473451B8D} = {AF4F465D-2356-433D-ABAE-6185CC65EDD7}
-		{2E63D956-5B22-44CE-892E-CD5846A299D7} = {05B3A54B-E845-469C-9AF6-4668B930E039}
+		{98B19C37-0DA6-49E2-96CD-50C473451B8D} = {838BC939-7F4E-4BAB-88B9-84296B977F47}
+		{2E63D956-5B22-44CE-892E-CD5846A299D7} = {838BC939-7F4E-4BAB-88B9-84296B977F47}
+		{A021D081-A60C-47D2-BE10-67EF25B4A97C} = {75E582A2-2CC0-4B21-8E7B-BA6CEC49195A}
+		{6704A0E6-626A-47A2-AAB6-1E8AA60008F5} = {75E582A2-2CC0-4B21-8E7B-BA6CEC49195A}
 	EndGlobalSection
 EndGlobal

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ADO.Query</RootNamespace>
     <AssemblyName>ADO.Query</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -34,19 +34,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.2.2.4.3\lib\net40\Mono.Security.dll</HintPath>
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.8\lib\net40\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Npgsql, Version=2.2.4.3, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.2.2.4.3\lib\net40\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Slapper, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Slapper.AutoMapper.1.0.0.7\lib\Slapper.dll</HintPath>
+    <Reference Include="Slapper, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Slapper.AutoMapper.1.1.0.0\lib\net45\Slapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -59,21 +59,53 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\DataReaderToDynamic.cs" />
-    <Compile Include="Helper\QueryRunner.cs" />
+    <Compile Include="..\ADO.Query.Core\Extensions\DataReaderToDynamic.cs">
+      <Link>Extensions\DataReaderToDynamic.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Helper\DataAccessSettings.cs">
+      <Link>Helper\DataAccessSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Helper\IQueryRunner.cs">
+      <Link>Helper\IQueryRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Helper\MsSql.cs">
+      <Link>Helper\MsSql.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Helper\PgSql.cs">
+      <Link>Helper\PgSql.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Helper\QueryRunner.cs">
+      <Link>Helper\QueryRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Mapper\IQueryMappers.cs">
+      <Link>Mapper\IQueryMappers.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\Mapper\QueryMapper.cs">
+      <Link>Mapper\QueryMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\PageSqlResult.cs">
+      <Link>SqlQuery\PageSqlResult.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\QueryMapperResult.cs">
+      <Link>SqlQuery\QueryMapperResult.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlPagedQuery.cs">
+      <Link>SqlQuery\SqlPagedQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlPagedQueryGeneric.cs">
+      <Link>Helper\SqlPagedQueryGeneric.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlQuery.cs">
+      <Link>SqlQuery\SqlQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\ADO.Query.Core\SqlQuery\SqlQueryGeneric.cs">
+      <Link>Helper\SqlQueryGeneric.cs</Link>
+    </Compile>
     <Compile Include="Helper\ConfigurationMissingException.cs" />
     <Compile Include="Helper\DataAccessSectionHandler.cs" />
-    <Compile Include="Helper\IQueryRunner.cs" />
-    <Compile Include="Helper\MsSql.cs" />
     <Compile Include="Helper\MySql.cs" />
-    <Compile Include="Helper\PgSql.cs" />
+    <Compile Include="Helper\QueryRunner.Factory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mapper\QueryMapper.cs" />
-    <Compile Include="Mapper\IQueryMappers.cs" />
-    <Compile Include="SqlQuery\ISqlPagedQuery.cs" />
-    <Compile Include="SqlQuery\ISqlQuery.cs" />
-    <Compile Include="SqlQuery\PageSqlResult.cs" />
-    <Compile Include="SqlQuery\QueryMapperResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

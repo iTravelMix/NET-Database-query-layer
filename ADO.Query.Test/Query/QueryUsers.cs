@@ -1,9 +1,9 @@
 ﻿namespace ADO.Query.Test.Query
 {
     using System.Collections.Generic;
-    using ADO.Query.SqlQuery;
+    using SqlQuery;
 
-    public class QueryUsers : ISqlQuery
+    public class QueryUsers : SqlQuery
     {
         public QueryUsers()
         {
@@ -19,9 +19,5 @@
                 {"id", id}                                      
             };
         }
-
-        public string Expression { get; private set; }
-
-        public IDictionary<string, object> Parameters { get; private set; }
     }
 }

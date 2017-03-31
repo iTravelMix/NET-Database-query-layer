@@ -18,7 +18,7 @@
         {            
         }
 
-        public MockQueryRunner(IQueryMappers mapper) : base(mapper)
+        public MockQueryRunner(string connectionString, IQueryMappers mapper = null) : base(connectionString, mapper)
         {
         }
 
@@ -50,46 +50,6 @@
 
             this.parameters.Add(parameter);
             return parameter;
-        }
-
-        protected override IDbDataAdapter GetDataAdapter()
-        {
-            var dba = MockRepository.GenerateMock<IDbDataAdapter>();
-            dba.Expect(da => da.SelectCommand);
-
-            return dba;
-        }
-
-        protected override void DeriveParameters(IDbCommand cmd)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override DataTable FillTable(IDbDataAdapter da)
-        {
-            if (this.ReturnValues == null || !this.ReturnValues.Any()) throw new NoNullAllowedException();
-
-            var dt = new DataTable();
-            dt.Clear();
-
-            foreach (var col in this.ReturnValues[0].Keys)
-            {
-                dt.Columns.Add(col);
-            }
-
-            foreach (var rows in this.ReturnValues)
-            {
-                var row = dt.NewRow();
-
-                foreach (var returnValue in rows)
-                {
-                    row[returnValue.Key] = returnValue.Value;
-                }
-
-                dt.Rows.Add(row);
-            }
-            
-            return dt;
         }
 
         public IEnumerable<IDataParameter> Parameters
