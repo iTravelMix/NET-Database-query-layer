@@ -1,9 +1,0 @@
-{
-  "projects": [
-    "ADO.Query.Core",
-    "ADO.Query.Core.Test"
-  ],
-  "sdk": {
-    "version": "1.0.0-preview2-003131"
-  }
-}

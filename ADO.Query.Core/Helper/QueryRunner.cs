@@ -37,7 +37,7 @@ namespace ADO.Query.Helper
 
 		protected virtual void AttachParameters(IDbCommand command, IDataParameter[] commandParameters)
 		{
-			if( command == null ) throw new ArgumentNullException("command");
+			if( command == null ) throw new ArgumentNullException(nameof(command));
 			if (commandParameters == null) return;
 			
 			foreach (var p in commandParameters.Where(p => p != null))
@@ -55,8 +55,8 @@ namespace ADO.Query.Helper
 
 		protected virtual void PrepareCommand(IDbCommand command, IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters, out bool mustCloseConnection )
 		{
-			if( command == null ) throw new ArgumentNullException("command");
-			if( string.IsNullOrEmpty(commandText) ) throw new ArgumentNullException("commandText");
+			if( command == null ) throw new ArgumentNullException(nameof(command));
+			if( string.IsNullOrEmpty(commandText) ) throw new ArgumentNullException(nameof(commandText));
 
 			// If the provided connection is not open, we will open it
 			if (connection.State != ConnectionState.Open)
@@ -78,7 +78,7 @@ namespace ADO.Query.Helper
 			// If we were provided a transaction, assign it
 			if (transaction != null)
 			{
-				if( transaction.Connection == null ) throw new ArgumentException( "The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
+				if( transaction.Connection == null ) throw new ArgumentException( "The transaction was rollbacked or commited, please provide an open transaction.", nameof(transaction));
 				command.Transaction = transaction;
 			}
 
@@ -157,7 +157,7 @@ namespace ADO.Query.Helper
 
 		private IDataReader ExecuteReader(IDbConnection connection, IDbTransaction transaction, CommandType commandType, string commandText, IDataParameter[] commandParameters)
 		{
-			if (connection == null) throw new ArgumentNullException("connection");
+			if (connection == null) throw new ArgumentNullException(nameof(connection));
 			bool mustCloseConnection;
 
 			// Create a command and prepare it for execution
@@ -193,7 +193,7 @@ namespace ADO.Query.Helper
 
 		private T ExecuteScalar<T>(IDbConnection connection, CommandType commandType, string commandText, params IDataParameter[] commandParameters)
 		{
-			if (connection == null) throw new ArgumentNullException("connection");
+			if (connection == null) throw new ArgumentNullException(nameof(connection));
 			var mustCloseConnection = false;
 
 			try
@@ -232,7 +232,7 @@ namespace ADO.Query.Helper
 
 		private IDataParameter[] GetCriterialParameters(IEnumerable<KeyValuePair<string, object>> parameters)
 		{
-			return parameters != null ? parameters.Select(p => this.GetParameter(p.Key, p.Value)).ToArray() : null;
+			return parameters?.Select(p => this.GetParameter(p.Key, p.Value)).ToArray();
 		}
 		
 		#endregion Parameter Discovery Functions
